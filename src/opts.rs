@@ -1,6 +1,6 @@
+use clap::Parser;
 use std::fmt;
 use std::str::FromStr;
-use clap::Parser;
 
 #[derive(Debug, Parser)]
 #[command(name = "rcli", version, author, about, long_about = None)]
@@ -78,7 +78,6 @@ fn verify_input_file(filename: &str) -> Result<String, String> {
 //     }
 // }
 
-
 // 处理输入参数：方法二
 // 通过实现 FromStr trait，使得任何字符串都可以使用标准的 .parse() 方法尝试转换为 OutputFormat。
 // 这是 Rust 惯用的方法来处理从字符串到某个类型的转换。
@@ -99,7 +98,6 @@ impl FromStr for OutputFormat {
         }
     }
 }
-
 
 // 将 OutputFormat 枚举类型转换为字符串
 // fmt::Display for OutputFormat 是一个 Display trait 的实现，它定义了如何将 OutputFormat 枚举类型格式化为字符串。

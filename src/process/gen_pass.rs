@@ -7,7 +7,13 @@ const LOWER: &[u8] = b"abcdefghijkmnopqrstuvwxyz";
 const NUMBER: &[u8] = b"123456789";
 const SYMBOL: &[u8] = b"!@#$%^&*_";
 
-pub fn process_genpass(length: u8, no_upper: bool, no_lower: bool, no_number: bool, no_symbol: bool) -> anyhow::Result<()> {
+pub fn process_genpass(
+    length: u8,
+    no_upper: bool,
+    no_lower: bool,
+    no_number: bool,
+    no_symbol: bool,
+) -> anyhow::Result<()> {
     // 创建了一个随机数生成器 rng。
     let mut rng = rand::thread_rng();
     // 创建了两个空的 Vec，分别用来存储密码和字符集。
