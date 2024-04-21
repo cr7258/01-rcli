@@ -1,22 +1,7 @@
 # 第一周：魔法神箭：从 Hello world 到实用的 CLI 工具
 
-## 内容
-
-- 重构代码模块
-
-## 重构代码模块
-
-为了提升代码的可读性，我们将原先 main.rs 中的代码安装逻辑拆分为多个模块。
-
-- opts.rs：定义命令行参数。
-- process.rs：读取 CSV 文件中的数据，并将数据写入到 JSON 文件中。
-- lib.rs：声明模块以及公开导出函数供 main.rs 使用。
-- main.rs：主程序入口。
-
-对于需要公开导出的结构体或者函数，我们需要在 opts.rs 和 process.rs 中使用 pub 关键字进行声明。
-
-执行命令后，会将 CSV 文件中的数据读取出来，并将数据写入到 JSON 文件（默认是 output.json，可以通过 -o 参数指定）中。
-
-```bash
-cargo run -- csv -i assets/juventus.csv
-```
+| 课程视频 | 内容 | 分支 | commit | 视频时间 |
+|---|---|---|---|---|
+| 7.CLI 项目：处理 CSV | 初始化 CLI，能够读取并打印命令行参数 | [01-initialize-cli](https://github.com/cr7258/01-rcli/tree/01-initialize-cli) | [c2febd7](https://github.com/cr7258/01-rcli/commit/c2febd75c53aa9eeef7bfdd39e5d4f1678a8f5bf) | 00:00 - 25:40   |
+| 7.CLI 项目：处理 CSV | 使用 Serde 从 CSV 文件中反序列化数据，并将数据序列化为 JSON 格式 | [02-read-csv-write-json](https://github.com/cr7258/01-rcli/tree/02-read-csv-write-json) | [a376170](https://github.com/cr7258/01-rcli/commit/a3761704ee7047e5e5d775b2e8f55e0681c01871)  | 25:40 - 44:50   |
+| 7.CLI 项目：处理 CSV | 拆分 main 文件，重构代码模块 | [03-refactor-modules](https://github.com/cr7258/01-rcli/tree/03-refactor-modules) | [4919125](https://github.com/cr7258/01-rcli/commit/4919125e697052969e5ce09f75ce006bce004714)  | 44:50 - 59:11   |

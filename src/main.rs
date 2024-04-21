@@ -1,5 +1,5 @@
 use clap::Parser;
-use rcli::{Opts, process_csv, SubCommand};
+use rcli::{process_csv, Opts, SubCommand};
 
 fn main() -> anyhow::Result<()> {
     let opts: Opts = Opts::parse();
