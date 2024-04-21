@@ -1,83 +1,11 @@
-# Geektime Rust 语言训练营
+# 第一周：魔法神箭：从 Hello world 到实用的 CLI 工具
 
-## 环境设置
-
-### 安装 Rust
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-### 安装 VSCode 插件
-
-- crates: Rust 包管理
-- Even Better TOML: TOML 文件支持
-- Better Comments: 优化注释显示
-- Error Lens: 错误提示优化
-- GitLens: Git 增强
-- Github Copilot: 代码提示
-- indent-rainbow: 缩进显示优化
-- Prettier - Code formatter: 代码格式化
-- REST client: REST API 调试
-- rust-analyzer: Rust 语言支持
-- Rust Test lens: Rust 测试支持
-- Rust Test Explorer: Rust 测试概览
-- TODO Highlight: TODO 高亮
-- vscode-icons: 图标优化
-- YAML: YAML 文件支持
-
-### 安装 cargo generate
-
-cargo generate 是一个用于生成项目模板的工具。它可以使用已有的 github repo 作为模版生成新的项目。
-
-```bash
-cargo install cargo-generate
-```
-
-在我们的课程中，新的项目会使用 `tyr-rust-bootcamp/template` 模版生成基本的代码：
-
-```bash
-cargo generate tyr-rust-bootcamp/template
-```
-
-### 安装 pre-commit
-
-pre-commit 是一个代码检查工具，可以在提交代码前进行代码检查。
-
-```bash
-pipx install pre-commit
-```
-
-安装成功后运行 `pre-commit install` 即可。
-
-### 安装 Cargo deny
-
-Cargo deny 是一个 Cargo 插件，可以用于检查依赖的安全性。
-
-```bash
-cargo install --locked cargo-deny
-```
-
-### 安装 typos
-
-typos 是一个拼写检查工具。
-
-```bash
-cargo install typos-cli
-```
-
-### 安装 git cliff
-
-git cliff 是一个生成 changelog 的工具。
-
-```bash
-cargo install git-cliff
-```
-
-### 安装 cargo nextest
-
-cargo nextest 是一个 Rust 增强测试工具。
-
-```bash
-cargo install cargo-nextest --locked
-```
+| 课程视频                      | 内容                                                               | commit                                                                                        | 视频时间        |
+|-------------------------------|--------------------------------------------------------------------|------------------------------------------------------------------------------------------------|-----------------|
+| 7.CLI 项目：处理 CSV          | 初始化 CLI，能够读取并打印命令行参数                                  | [c2febd7](https://github.com/cr7258/01-rcli/commit/c2febd75c53aa9eeef7bfdd39e5d4f1678a8f5bf) | 00:00 - 25:40   |
+| 7.CLI 项目：处理 CSV          | 使用 Serde 从 CSV 文件中反序列化数据，并将数据序列化为 JSON 格式     | [a376170](https://github.com/cr7258/01-rcli/commit/a3761704ee7047e5e5d775b2e8f55e0681c01871)  | 25:40 - 44:50   |
+| 7.CLI 项目：处理 CSV          | 拆分 main 文件，重构代码模块                                         | [4919125](https://github.com/cr7258/01-rcli/commit/4919125e697052969e5ce09f75ce006bce004714)  | 44:50 - 59:11   |
+| 8.CLI 项目：生成随机密码      | 支持通用的 CSV 字段                                                | [4f93780](https://github.com/cr7258/01-rcli/commit/4f93780b7dd31c8ecffaf3b71a0aa3b59e829133)  | 00:00 - 13:00   |
+| 8.CLI 项目：生成随机密码      | 支持通用的 JSON 和 YAML 数据类型                                    | [a936e3e](https://github.com/cr7258/01-rcli/commit/a936e3ee60e6e9a7596a597bda389043772baf58)  | 13:00 - 37:45   |
+| 8.CLI 项目：生成随机密码      | 密码生成器                                                         | [109abbe](https://github.com/cr7258/01-rcli/commit/109abbe8702a644333d88211e9a4ba687c603f28)  | 37:45 - 01:07:40|
+| 8.CLI 项目：生成随机密码      | 测试密码强度                                                       | [4fbbbe2](https://github.com/cr7258/01-rcli/commit/4fbbbe2794456780625b2638cc63769a0ced308e)  | 01:07:40 - 01:16:37|
