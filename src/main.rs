@@ -1,4 +1,4 @@
-use clap::{Parser, value_parser};
+use clap::Parser;
 
 #[derive(Debug, Parser)]
 #[command(name = "rcli", version, author, about, long_about = None)]
@@ -13,6 +13,8 @@ enum SubCommand {
     Csv(CsvOpts),
 }
 
+// default_value_t 直接使用提供的字面量。
+// 而 default_value 实现了 `From` trait，调用了 "output.json".into()，提供的字面量 &str 会被转换为 String 类型。
 #[derive(Debug, Parser)]
 struct CsvOpts {
     #[arg(short, long, value_parser = verify_input_file)]

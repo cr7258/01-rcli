@@ -31,7 +31,7 @@ Opts { cmd: Csv(CsvOpts { input: "test.csv", output: "output.json", delimiter: '
 #[derive(Debug, Parser)]
 struct CsvOpts {
     #[arg(short, long, value_parser = verify_input_file)]
-    input: String, 
+    input: String,
     ......
 }
 
@@ -52,4 +52,20 @@ cargo run -- csv -i test.csv
 
 # 输出
 error: invalid value 'test.csv' for '--input <INPUT>': File not found: test.csv
+```
+
+## default_value_t 和 default_value 的区别
+
+default_value_t 直接使用提供的字面量。
+而 default_value 实现了 `From` trait，调用了 "output.json".into()，提供的字面量 &str 会被转换为 String 类型。
+
+```rust
+#[derive(Debug, Parser)]
+struct CsvOpts {
+    #[arg(short, long, default_value = "output.json")]
+    output: String,
+
+    #[arg(long, default_value_t = true)]
+    header: bool,
+}
 ```
