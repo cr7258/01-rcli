@@ -7,6 +7,13 @@ All notable changes to this project will be documented in this file. See [conven
 
 ### Features
 
+- 支持 base64 编解码工具 - ([4dfe25e](https://github.com/cr7258/01-rcli/commit/4dfe25e3eff14da8af29d0e02ad1d2e1ab1a4692)) - chengzw
+
+---
+## [1-8-genpass] - 2024-04-21
+
+### Features
+
 - 初始化 CLI，能够读取并打印命令行参数 - ([ba48d04](https://github.com/cr7258/01-rcli/commit/ba48d0409b788b9b88c4ab930164ade376bc3cff)) - chengzw
 - 使用 Serde 从 CSV 文件中反序列化数据，并将数据序列化为 JSON 格式 - ([9abe7a1](https://github.com/cr7258/01-rcli/commit/9abe7a19e5526b9cf798353c28bca8f8894fef6c)) - chengzw
 - 支持通用的 CSV 字段 - ([6c99d6d](https://github.com/cr7258/01-rcli/commit/6c99d6d35e6bbc485d3444f98d9d2f4dbeaee672)) - chengzw
