@@ -1,9 +1,11 @@
-use crate::opts::OutputFormat;
+use anyhow::Result;
 use csv::Reader;
 use serde_json::Value;
 use std::fs;
 
-pub fn process_csv(input: &str, output: String, format: OutputFormat) -> anyhow::Result<()> {
+use crate::cli::OutputFormat;
+
+pub fn process_csv(input: &str, output: String, format: OutputFormat) -> Result<()> {
     let mut reader = Reader::from_path(input)?;
     let mut ret = Vec::with_capacity(128);
     // headers() 方法会返回 CSV 文件的第一行，即表头
