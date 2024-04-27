@@ -1,5 +1,4 @@
 use rand::prelude::SliceRandom;
-use zxcvbn::zxcvbn;
 
 // 定义了四个常量 UPPER、LOWER、NUMBER 和 SYMBOL，分别代表了大写字母、小写字母、数字和符号。
 const UPPER: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -13,7 +12,7 @@ pub fn process_genpass(
     no_lower: bool,
     no_number: bool,
     no_symbol: bool,
-) -> anyhow::Result<()> {
+) -> anyhow::Result<String> {
     // 创建了一个随机数生成器 rng。
     let mut rng = rand::thread_rng();
     // 创建了两个空的 Vec，分别用来存储密码和字符集。
@@ -50,14 +49,5 @@ pub fn process_genpass(
     // 将密码打乱顺序
     password.shuffle(&mut rng);
 
-    // 将密码转换为字符串，并打印出来。
-    let password = String::from_utf8(password)?;
-    println!("{}", password);
-
-    let estimate = zxcvbn(&password, &[])?;
-    // eprintln! 的输出会被打印到标准错误流中，而不是标准输出流中。
-    // 比如 cargo run -- genpass -l 16 > password.txt 只会将密码保存到 password.txt 文件中，而不会包含密码强度的信息。
-    eprintln!("Password strength: {}", estimate.score());
-
-    Ok(())
+    Ok(String::from_utf8(password)?)
 }

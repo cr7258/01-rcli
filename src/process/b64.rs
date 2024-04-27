@@ -1,10 +1,11 @@
 use crate::cli::Base64Format;
+use crate::get_reader;
 use anyhow::Result;
 use base64::{
     engine::general_purpose::{STANDARD, URL_SAFE_NO_PAD},
     Engine,
 };
-use std::{fs::File, io, io::Read};
+use std::io::Read;
 
 pub fn process_encode(input: &str, format: Base64Format) -> Result<()> {
     let mut reader = get_reader(input)?;
@@ -37,20 +38,7 @@ pub fn process_decode(input: &str, format: Base64Format) -> Result<()> {
     Ok(())
 }
 
-// 为什么要使用 Box<dyn Read> 类型？
-// 使用 Box<dyn Read> 使得函数能够统一这两种不同来源的返回类型，提供了很高的灵活性。
-// 由于标准输入和文件输入都实现了 Read trait，我们可以使用 trait 对象来统一这两种类型。
-fn get_reader(input: &str) -> Result<Box<dyn Read>> {
-    let reader: Box<dyn Read> = if input == "-" {
-        Box::new(io::stdin())
-    } else {
-        Box::new(File::open(input)?)
-    };
-    Ok(reader)
-}
-
 #[cfg(test)]
-
 mod tests {
     use super::*;
 
