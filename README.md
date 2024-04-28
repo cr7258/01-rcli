@@ -1,68 +1,15 @@
 # 第一周：魔法神箭：从 Hello world 到实用的 CLI 工具
 
-* [添加依赖](#添加依赖)
-* [Tower, tower-http 和 Axum 的关系](#tower-tower-http-和-axum-的关系)
-* [主要代码](#主要代码)
-* [单元测试](#单元测试)
-* [验证效果](#验证效果)
-
-## 添加依赖
-
-```bash
-cargo add tower-http --features compression-full --features cors --features trace --features fs
-```
-
-## Tower, tower-http 和 Axum 的关系
-
-`tower-http` 是一个构建在 `Tower` 框架之上的库，专门用于处理 HTTP 相关的功能。它是 `Tower` 生态系统的一部分，提供了多种 HTTP 中间件和工具，使得开发者可以更有效地构建 HTTP 服务。
-
-以下是 `tower-http` 与 `Tower` 和 `Axum` 的关系概述：
-
-- **与 Tower 的关系**：`tower-http` 直接扩展了 `Tower` 的功能，提供了专门针对 HTTP 服务的中间件和工具。这些中间件可以处理各种 HTTP 请求和响应的场景，例如日志记录、压缩、认证等。由于 `tower-http` 是基于 `Tower` 构建的，它自然地融入了 `Tower` 的设计哲学和使用方式。
-- **与 Axum 的关系**：由于 `Axum` 也是建立在 `Tower` 之上的 Web 框架，`tower-http` 中的功能可以被 `Axum` 利用来增强其 HTTP 处理能力。例如，使用 `tower-http` 提供的中间件来实现请求日志记录、请求超时处理等。`Axum` 用户可以直接在他们的应用中使用 `tower-http` 的中间件，以提升应用的性能和功能。
-
-## 主要代码
-
-使用 `tower-http` 提供的 `ServeDir` 中间件，可以方便地将指定目录下的文件提供给 HTTP 客户端，比我们自己像上一节那样写 file_handler 来处理更加简单。
-
-```bash
-nest_service("/tower", ServeDir::new(path))
-```
-
-## 单元测试
-
-```bash
-cargo nextest run
-   Compiling rcli v0.1.0 (/Users/I576375/Code/rust/rust-learning/geek-rust-bootcamp/01-rcli)
-    Finished test [unoptimized + debuginfo] target(s) in 1.99s
-    Starting 7 tests across 2 binaries (run ID: d34f6e68-f425-4f42-a7a9-31988fd1e410, nextest profile: default)
-        PASS [   0.009s] rcli cli::tests::test_verify_file
-        PASS [   0.008s] rcli process::http_serve::tests::test_file_not_found
-        PASS [   0.009s] rcli process::b64::tests::test_process_encode
-        PASS [   0.009s] rcli process::http_serve::tests::test_file_handler
-        PASS [   0.011s] rcli process::b64::tests::test_process_decode
-        PASS [   0.010s] rcli process::text::tests::test_blake3_sign_verify
-        PASS [   0.010s] rcli process::text::tests::test_ed25519_sign_verify
-------------
-     Summary [   0.013s] 7 tests run: 7 passed, 0 skipped
-```
-
-## 验证效果
-
-执行以下命令启动 HTTP 文件服务器：
-
-```bash
-RUST_LOG=info cargo run -- http serve
-```
-
-以下两个请求的效果一样，分别测试了只使用 Axum 和使用了 tower-http 的效果：
-
-```bash
-### Test static file
-
-GET http://localhost:8080/fixtures/b64.txt
-
-### Test static file with tower-http
-
-GET http://localhost:8080/tower/fixtures/b64.txt
-```
+| 课程视频                                    | 内容                                        | 分支                                                                                                          | commit | 视频时间                |
+|-----------------------------------------|-------------------------------------------|-------------------------------------------------------------------------------------------------------------|---|---------------------|
+| 7.CLI 项目：处理 CSV                         | 初始化 CLI，能够读取并打印命令行参数                      | [01-initialize-cli](https://github.com/cr7258/01-rcli/tree/01-initialize-cli)                               | [c2febd7](https://github.com/cr7258/01-rcli/commit/c2febd75c53aa9eeef7bfdd39e5d4f1678a8f5bf) | 00:00 - 25:40       |
+| 7.CLI 项目：处理 CSV                         | 使用 Serde 从 CSV 文件中反序列化数据，并将数据序列化为 JSON 格式 | [02-read-csv-write-json](https://github.com/cr7258/01-rcli/tree/02-read-csv-write-json)                     | [a376170](https://github.com/cr7258/01-rcli/commit/a3761704ee7047e5e5d775b2e8f55e0681c01871)  | 25:40 - 44:50       |
+| 7.CLI 项目：处理 CSV                         | 拆分 main 文件，重构代码模块                         | [03-refactor-modules](https://github.com/cr7258/01-rcli/tree/03-refactor-modules)                           | [4919125](https://github.com/cr7258/01-rcli/commit/4919125e697052969e5ce09f75ce006bce004714)  | 44:50 - 59:11       |
+| 8.CLI 项目：生成随机密码                         | 支持通用的 CSV 字段                              | [04-support-generic-json](https://github.com/cr7258/01-rcli/tree/04-support-generic-json)                   | [4f93780](https://github.com/cr7258/01-rcli/commit/4f93780b7dd31c8ecffaf3b71a0aa3b59e829133)  | 00:00 - 13:00       |
+| 8.CLI 项目：生成随机密码                         | 支持通用的 JSON 和 YAML 数据类型                    | [05-support-generic-json-and-yaml](https://github.com/cr7258/01-rcli/tree/05-support-generic-json-and-yaml) | [a936e3e](https://github.com/cr7258/01-rcli/commit/a936e3ee60e6e9a7596a597bda389043772baf58)  | 13:00 - 37:45       |
+| 8.CLI 项目：生成随机密码                         | 密码生成器                                     | [06-password-generator](https://github.com/cr7258/01-rcli/tree/06-password-generator)                       | [109abbe](https://github.com/cr7258/01-rcli/commit/109abbe8702a644333d88211e9a4ba687c603f28)  | 37:45 - 01:07:40    |
+| 8.CLI 项目：生成随机密码                         | 测试密码强度                                    | [07-password-strength](https://github.com/cr7258/01-rcli/tree/07-password-strength)                         | [4fbbbe2](https://github.com/cr7258/01-rcli/commit/4fbbbe2794456780625b2638cc63769a0ced308e)  | 01:07:40 - 01:16:37 |
+| 9.CLI 项目：Base64 编解码                     | 支持 Base64 编解码工具                           | [08-base64](https://github.com/cr7258/01-rcli/tree/08-base64)                                               | [4dfe25e](https://github.com/cr7258/01-rcli/commit/4dfe25e3eff14da8af29d0e02ad1d2e1ab1a4692)  |     |
+| 10.CLI 项目：文本签名（一）<br/>11.CLI 项目：文本签名（二） | 使用 Blake3 和 Ed25519 对文本进行签名和验证            | [09-sign-verify](https://github.com/cr7258/01-rcli/tree/09-sign-verify)                                               | [3a55a44](https://github.com/cr7258/01-rcli/commit/3a55a44f7f8d9b2d5e8191dfa76a0d04f33c575b)  |        |
+| 12.CLI 项目：HTTP 文件服务器（一）                 | 静态 HTTP 文件服务器                             | [10-http-static-server](https://github.com/cr7258/01-rcli/tree/10-http-static-server)                                               | [a4485fa](https://github.com/cr7258/01-rcli/commit/a4485fa2d02badff88e7c795147a7ff403f1c40d)  |        |
+| 13.CLI 项目：HTTP 文件服务器（二）                 | 使用 tower-http 构建静态 HTTP 文件服务器             | [11-tower-http](https://github.com/cr7258/01-rcli/tree/11-tower-http)                                               | [8cb74bc](https://github.com/cr7258/01-rcli/commit/8cb74bc13016c1e437f60409ce0c701fa6385a79)  |        |
