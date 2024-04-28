@@ -9,3 +9,7 @@ GET http://localhost:8080/404.file
 ### Test file format not supported
 
 GET http://localhost:8080/fixtures/ed25519.pk
+
+### Test static file with tower-http
+
+GET http://localhost:8080/tower/fixtures/b64.txt

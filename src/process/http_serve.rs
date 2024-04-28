@@ -6,6 +6,7 @@ use axum::{
     Router,
 };
 use std::{net::SocketAddr, path::PathBuf, sync::Arc};
+use tower_http::services::ServeDir;
 use tracing::{info, warn};
 
 #[derive(Debug)]
@@ -17,8 +18,10 @@ pub async fn process_http_serve(path: PathBuf, port: u16) -> Result<()> {
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
     info!("Serving {:?} on {}", path, addr);
 
-    let state = HttpServeState { path };
+    let state = HttpServeState { path: path.clone() };
     let router = Router::new()
+        // nest_service 用于将一个服务嵌套在一个特定的路由前缀下。这意味着所有匹配这个 /tower 前缀的请求都会被转发到指定的服务。
+        .nest_service("/tower", ServeDir::new(path))
         .route("/*path", get(file_handler))
         .with_state(Arc::new(state));
     let listener = tokio::net::TcpListener::bind(addr).await?;
@@ -51,5 +54,29 @@ async fn file_handler(
                 (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_file_handler() {
+        let state = Arc::new(HttpServeState {
+            path: PathBuf::from("."),
+        });
+        let (status, content) = file_handler(State(state), Path("Cargo.toml".to_string())).await;
+        assert_eq!(status, StatusCode::OK);
+        assert!(content.trim().starts_with("[package]"))
+    }
+
+    #[tokio::test]
+    async fn test_file_not_found() {
+        let state = Arc::new(HttpServeState {
+            path: PathBuf::from("."),
+        });
+        let (status, _) = file_handler(State(state), Path("not-exist".to_string())).await;
+        assert_eq!(status, StatusCode::NOT_FOUND);
     }
 }
