@@ -3,12 +3,15 @@ use base64::Engine;
 use clap::Parser;
 use rcli::{
     get_content, get_reader, process_csv, process_decode, process_encode, process_genpass,
-    process_text_key_generate, process_text_sign, process_text_verify, Base64SubCommand, Opts,
-    SubCommand, TextSubCommand,
+    process_http_serve, process_text_key_generate, process_text_sign, process_text_verify,
+    Base64SubCommand, HttpSubCommand, Opts, SubCommand, TextSubCommand,
 };
 use std::fs;
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // 初始化 tracing_subscriber 的日志系统
+    tracing_subscriber::fmt::init();
     let opts: Opts = Opts::parse();
     match opts.cmd {
         SubCommand::Csv(opts) => {
@@ -60,6 +63,11 @@ fn main() -> anyhow::Result<()> {
                 for (k, v) in key {
                     fs::write(opts.output_path.join(k), v)?;
                 }
+            }
+        },
+        SubCommand::Http(cmd) => match cmd {
+            HttpSubCommand::Serve(opts) => {
+                process_http_serve(opts.dir, opts.port).await?;
             }
         },
     }

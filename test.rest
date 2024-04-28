@@ -1,0 +1,11 @@
+### Test static file
+
+GET http://localhost:8080/fixtures/b64.txt
+
+### Test file not found
+
+GET http://localhost:8080/404.file
+
+### Test file format not supported
+
+GET http://localhost:8080/fixtures/ed25519.pk
