@@ -1,15 +1,112 @@
 # 第一周：魔法神箭：从 Hello world 到实用的 CLI 工具
 
-| 课程视频                                    | 内容                                        | 分支                                                                                                          | commit | 视频时间                |
-|-----------------------------------------|-------------------------------------------|-------------------------------------------------------------------------------------------------------------|---|---------------------|
-| 7.CLI 项目：处理 CSV                         | 初始化 CLI，能够读取并打印命令行参数                      | [01-initialize-cli](https://github.com/cr7258/01-rcli/tree/01-initialize-cli)                               | [c2febd7](https://github.com/cr7258/01-rcli/commit/c2febd75c53aa9eeef7bfdd39e5d4f1678a8f5bf) | 00:00 - 25:40       |
-| 7.CLI 项目：处理 CSV                         | 使用 Serde 从 CSV 文件中反序列化数据，并将数据序列化为 JSON 格式 | [02-read-csv-write-json](https://github.com/cr7258/01-rcli/tree/02-read-csv-write-json)                     | [a376170](https://github.com/cr7258/01-rcli/commit/a3761704ee7047e5e5d775b2e8f55e0681c01871)  | 25:40 - 44:50       |
-| 7.CLI 项目：处理 CSV                         | 拆分 main 文件，重构代码模块                         | [03-refactor-modules](https://github.com/cr7258/01-rcli/tree/03-refactor-modules)                           | [4919125](https://github.com/cr7258/01-rcli/commit/4919125e697052969e5ce09f75ce006bce004714)  | 44:50 - 59:11       |
-| 8.CLI 项目：生成随机密码                         | 支持通用的 CSV 字段                              | [04-support-generic-json](https://github.com/cr7258/01-rcli/tree/04-support-generic-json)                   | [4f93780](https://github.com/cr7258/01-rcli/commit/4f93780b7dd31c8ecffaf3b71a0aa3b59e829133)  | 00:00 - 13:00       |
-| 8.CLI 项目：生成随机密码                         | 支持通用的 JSON 和 YAML 数据类型                    | [05-support-generic-json-and-yaml](https://github.com/cr7258/01-rcli/tree/05-support-generic-json-and-yaml) | [a936e3e](https://github.com/cr7258/01-rcli/commit/a936e3ee60e6e9a7596a597bda389043772baf58)  | 13:00 - 37:45       |
-| 8.CLI 项目：生成随机密码                         | 密码生成器                                     | [06-password-generator](https://github.com/cr7258/01-rcli/tree/06-password-generator)                       | [109abbe](https://github.com/cr7258/01-rcli/commit/109abbe8702a644333d88211e9a4ba687c603f28)  | 37:45 - 01:07:40    |
-| 8.CLI 项目：生成随机密码                         | 测试密码强度                                    | [07-password-strength](https://github.com/cr7258/01-rcli/tree/07-password-strength)                         | [4fbbbe2](https://github.com/cr7258/01-rcli/commit/4fbbbe2794456780625b2638cc63769a0ced308e)  | 01:07:40 - 01:16:37 |
-| 9.CLI 项目：Base64 编解码                     | 支持 Base64 编解码工具                           | [08-base64](https://github.com/cr7258/01-rcli/tree/08-base64)                                               | [4dfe25e](https://github.com/cr7258/01-rcli/commit/4dfe25e3eff14da8af29d0e02ad1d2e1ab1a4692)  |     |
-| 10.CLI 项目：文本签名（一）<br/>11.CLI 项目：文本签名（二） | 使用 Blake3 和 Ed25519 对文本进行签名和验证            | [09-sign-verify](https://github.com/cr7258/01-rcli/tree/09-sign-verify)                                               | [3a55a44](https://github.com/cr7258/01-rcli/commit/3a55a44f7f8d9b2d5e8191dfa76a0d04f33c575b)  |        |
-| 12.CLI 项目：HTTP 文件服务器（一）                 | 静态 HTTP 文件服务器                             | [10-http-static-server](https://github.com/cr7258/01-rcli/tree/10-http-static-server)                                               | [a4485fa](https://github.com/cr7258/01-rcli/commit/a4485fa2d02badff88e7c795147a7ff403f1c40d)  |        |
-| 13.CLI 项目：HTTP 文件服务器（二）                 | 使用 tower-http 构建静态 HTTP 文件服务器             | [11-tower-http](https://github.com/cr7258/01-rcli/tree/11-tower-http)                                               | [8cb74bc](https://github.com/cr7258/01-rcli/commit/8cb74bc13016c1e437f60409ce0c701fa6385a79)  |        |
+* [主要代码](#主要代码)
+* [单元测试](#单元测试)
+* [安装 rcli 工具到本地](#安装-rcli-工具到本地)
+
+## 主要代码
+
+通过定义 CmdExecutor trait，我们可以为不同的命令行工具提供统一的执行接口。
+
+```rust
+// Rust 标准库尚未稳定地支持在 trait 中直接使用 async fn，
+// 使用这个宏用于允许在 trait 中使用 async fn 而不产生编译器警告或错误。
+#[allow(async_fn_in_trait)]
+pub trait CmdExecutor {
+    async fn execute(self) -> anyhow::Result<()>;
+}
+```
+
+例如 Base64EncodeOpts 和 Base64DecodeOpts 分别实现了 CmdExecutor trait，这样我们可以通过 Base64SubCommand 来统一执行 Base64EncodeOpts 和 Base64DecodeOpts。
+
+```rust
+impl CmdExecutor for Base64EncodeOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let mut reader = crate::get_reader(&self.input)?;
+        let ret = crate::process_encode(&mut reader, self.format)?;
+        println!("{}", ret);
+        Ok(())
+    }
+}
+
+impl CmdExecutor for Base64DecodeOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let mut reader = crate::get_reader(&self.input)?;
+        let ret = crate::process_decode(&mut reader, self.format)?;
+        println!("{}", ret);
+        Ok(())
+    }
+}
+
+impl CmdExecutor for Base64SubCommand {
+    async fn execute(self) -> anyhow::Result<()> {
+        match self {
+            Base64SubCommand::Encode(opts) => opts.execute().await,
+            Base64SubCommand::Decode(opts) => opts.execute().await,
+        }
+    }
+}
+```
+
+另外 Base64SubCommand 也实现了 CmdExecutor trait，这样我们可以通过 SubCommand 来统一执行 Base64SubCommand、TextSubCommand、HttpSubCommand 等。
+
+```rust
+impl CmdExecutor for SubCommand {
+    async fn execute(self) -> anyhow::Result<()> {
+        match self {
+            SubCommand::Csv(opts) => opts.execute().await,
+            SubCommand::GenPass(opts) => opts.execute().await,
+            SubCommand::Base64(cmd) => cmd.execute().await,
+            SubCommand::Text(cmd) => cmd.execute().await,
+            SubCommand::Http(cmd) => cmd.execute().await,
+        }
+    }
+}
+```
+
+最终原先在 main.rs 复杂的命令行逻辑将会被精简为一句代码：
+
+```rust
+opts.cmd.execute().await?;
+```
+
+## 单元测试
+
+```bash
+cargo nextest run
+
+Starting 7 tests across 2 binaries (run ID: 5f7c22fa-8461-4e0a-a734-bd72e5a2f233, nextest profile: default)
+    PASS [   0.008s] rcli cli::tests::test_verify_file
+    PASS [   0.008s] rcli process::b64::tests::test_process_decode
+    PASS [   0.007s] rcli process::http_serve::tests::test_file_not_found
+    PASS [   0.008s] rcli process::b64::tests::test_process_encode
+    PASS [   0.008s] rcli process::http_serve::tests::test_file_handler
+    PASS [   0.008s] rcli process::text::tests::test_blake3_sign_verify
+    PASS [   0.008s] rcli process::text::tests::test_ed25519_sign_verify
+------------
+ Summary [   0.010s] 7 tests run: 7 passed, 0 skipped
+```
+
+## 安装 rcli 工具到本地
+
+```bash
+cargo install --path .
+```
+
+运行 rcli 工具测试功能：
+
+生成密钥。
+
+```bash
+rcli genpass -l 20
+
+# 输出
+$PrfH4RTCn*3oJ^pi2%M
+Password strength: 4
+```
+
+启动 HTTP 服务器。
+
+```bash
+rcli http serve
+```

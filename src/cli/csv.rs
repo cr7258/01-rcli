@@ -1,4 +1,5 @@
 use crate::cli::verify_file;
+use crate::CmdExecutor;
 use clap::Parser;
 use std::{fmt, str::FromStr};
 
@@ -25,6 +26,17 @@ pub struct CsvOpts {
 
     #[arg(long, default_value_t = true)]
     pub header: bool,
+}
+
+impl CmdExecutor for CsvOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let output = if let Some(output) = self.output {
+            output
+        } else {
+            format!("output.{}", self.format)
+        };
+        crate::process_csv(&self.input, output, self.format)
+    }
 }
 
 // 处理输入参数：方法一
